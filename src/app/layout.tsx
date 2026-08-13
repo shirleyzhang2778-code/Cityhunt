@@ -1,13 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Myanmar } from "next/font/google";
 import "./globals.css";
-
-const notoMyanmar = Noto_Sans_Myanmar({
-  subsets: ["myanmar"],
-  weight: ["400", "700"],
-  variable: "--font-noto-myanmar",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "缅甸语背单词",
@@ -33,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="my" className={`${notoMyanmar.variable} font-burmese`}>
+    <html lang="my" className="font-burmese">
       <body className="min-h-screen bg-canvas antialiased">{children}</body>
     </html>
   );

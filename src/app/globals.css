@@ -10,8 +10,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Noto Sans Myanmar";
+  src: url("/fonts/NotoSansMyanmar-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Sans Myanmar";
+  src: url("/fonts/NotoSansMyanmar-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --font-burmese: "Pyidaungsu", var(--font-noto-myanmar), "Noto Sans Myanmar", sans-serif;
+  --font-burmese: "Pyidaungsu", "Noto Sans Myanmar", sans-serif;
   --background: #f9fafb;
   --foreground: #1f2937;
 }
