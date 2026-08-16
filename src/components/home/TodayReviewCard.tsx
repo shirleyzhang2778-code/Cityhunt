@@ -33,7 +33,10 @@ export function TodayReviewCard({ due, weak, completedToday, goal }: Props) {
       </div>
 
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-canvas">
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-[#34D399] to-[#60A5FA] transition-all"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
       <div className="mt-4 flex items-center justify-between">
