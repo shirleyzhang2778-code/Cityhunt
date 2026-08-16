@@ -8,6 +8,9 @@
 
 ## 必读索引
 
+- PRD 与设计入口：[`PRDs/README.md`](PRDs/README.md)
+- 当前产品需求：[`PRDs/product.md`](PRDs/product.md)
+- 前端 UI 设计规范：[`PRDs/ui-design.md`](PRDs/ui-design.md)
 - 项目边界与当前能力：[`docs/project/overview.md`](docs/project/overview.md)
 - 技术架构与数据流：[`docs/project/architecture.md`](docs/project/architecture.md)
 - 开发约定：[`docs/project/conventions.md`](docs/project/conventions.md)
@@ -22,7 +25,8 @@
 
 | 任务 | 优先读取 |
 | --- | --- |
-| 页面、组件、样式 | `docs/project/overview.md`、相关 `src/app` 页面和 `src/components` |
+| 产品需求、功能范围 | `PRDs/product.md`、`docs/project/overview.md` |
+| 页面、组件、样式 | `PRDs/ui-design.md`、相关 `src/app` 页面和 `src/components` |
 | 学习进度、离线缓存 | `docs/project/architecture.md`、`src/lib/db`、`src/lib/sync` |
 | 登录、权限、数据表 | `docs/project/architecture.md`、`supabase/migrations`、相关 API |
 | PWA、Service Worker | `next.config.ts`、`src/sw.ts`、`src/app/manifest.ts` |
@@ -56,6 +60,6 @@ supabase/functions/   可选的边缘函数实现
 docs/project/         稳定、长期有效的项目知识
 docs/work/            当前任务的过程文件
 docs/testing/         测试策略与验证记录入口
-PRDs/                 历史/原始产品与技术资料
+PRDs/                 当前产品 PRD、UI 设计与历史技术规范
 public/               静态资源
 ```

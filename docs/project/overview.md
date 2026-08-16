@@ -1,5 +1,7 @@
 # 项目概览
 
+正式产品需求见 [`../../PRDs/product.md`](../../PRDs/product.md)，前端视觉与页面规范见 [`../../PRDs/ui-design.md`](../../PRDs/ui-design.md)。本文件只保留稳定的项目摘要。
+
 ## 产品目标
 
 为缅甸语学习者提供可安装、可离线使用的背单词 Web 应用，覆盖词书解锁、章节学习、闪卡复习、生词收藏和学习进度同步。
@@ -25,6 +27,9 @@
 - `/books/[bookId]`：章节列表
 - `/study/[chapterId]`：章节闪卡学习
 - `/study/[chapterId]/complete`：章节完成页
+- `/review`：今日复习与薄弱词巩固
+- `/practice`：看词选义与听音选义
+- `/stats`：学习数据统计
 - `/vocabulary`：生词本
 - `/settings`：设置与缓存管理
 - `/login`、`/register`：身份入口

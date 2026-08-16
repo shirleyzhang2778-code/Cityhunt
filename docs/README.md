@@ -2,6 +2,11 @@
 
 文档按“稳定知识、当前工作、测试依据、历史资料”分层，避免把所有上下文堆进同一个文件。
 
+## 产品与设计
+
+- [`../PRDs/product.md`](../PRDs/product.md)：当前正式产品需求、用户流程、功能规则与验收主路径
+- [`../PRDs/ui-design.md`](../PRDs/ui-design.md)：当前前端视觉系统、页面规范、状态与移动端验收标准
+
 ## 稳定知识
 
 - [`project/overview.md`](project/overview.md)：产品目标、用户流程、范围边界
@@ -24,4 +29,4 @@
 
 ## 历史资料
 
-原始长篇技术规范保留在 [`../PRDs/development.md`](../PRDs/development.md)。它用于追溯设计意图，不自动代表当前实现；发生冲突时，以代码与数据库迁移为准。
+原始长篇技术规范保留在 [`../PRDs/development.md`](../PRDs/development.md)。`PRDs/` 的完整说明见 [`../PRDs/README.md`](../PRDs/README.md)。
