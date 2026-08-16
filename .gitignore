@@ -27,9 +27,6 @@ yarn-error.log*
 .env
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -37,12 +34,6 @@ next-env.d.ts
 # serwist
 public/sw.js
 public/sw.js.map
-
-# Tencent Cloud EdgeOne
-.env
-.edgeone/*
-.tef_dist/*
-.deploy-edgeone/
 
 # OpenNext
 .open-next
