@@ -5,6 +5,7 @@ import type { AppConfig, Banner, Book, Category, Chapter } from "@/lib/types";
 import { BookCard } from "@/components/books/BookCard";
 import { BannerCarousel } from "@/components/home/BannerCarousel";
 import { TodayReviewCard } from "@/components/home/TodayReviewCard";
+import { PracticeCard } from "@/components/home/PracticeCard";
 import { db } from "@/lib/db/dexie";
 import { createClient } from "@/lib/supabase/client";
 import { getDailyReviewGoal, getReviewSummary } from "@/lib/review";
@@ -165,6 +166,7 @@ export function HomeClient({
         isReviewMode={appConfig?.is_review_mode ?? false}
       />
       <TodayReviewCard {...reviewSummary} />
+      <PracticeCard />
       {categories.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-semibold text-primary">暂无词书数据</p>
