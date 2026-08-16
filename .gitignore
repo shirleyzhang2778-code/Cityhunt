@@ -43,3 +43,13 @@ public/sw.js.map
 .edgeone/*
 .tef_dist/*
 .deploy-edgeone/
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+
+!.env.example

@@ -17,36 +17,50 @@ export default function VocabularyPage() {
     const words: Word[] = [];
 
     if (db) {
-      const local = await db.vocabulary.toArray();
-      for (const v of local) {
-        if (v.word) {
-          words.push(v.word);
-        }
-      }
-    }
-
-    if (words.length === 0) {
       try {
-        const supabase = createClient();
-        const { data: session } = await supabase.auth.getSession();
-        if (session.session) {
-          const { data: vocab } = await supabase
-            .from("user_vocabulary")
-            .select("word_id")
-            .eq("user_id", session.session.user.id);
-          if (vocab?.length) {
-            const ids = vocab.map((v) => v.word_id);
-            const { data: ws } = await supabase.from("words").select("*").in("id", ids);
-            if (ws) words.push(...(ws as Word[]));
+        const local = await db.vocabulary.toArray();
+        for (const v of local) {
+          if (v.word) {
+            words.push(v.word);
           }
         }
       } catch {
-        // user_vocabulary 表可能不存在，忽略错误
+        // IndexedDB may be unavailable in private browsing or restricted contexts.
       }
     }
 
+    // Render the local result immediately. Remote recovery continues in the
+    // background so a slow Supabase connection never blocks the page.
     setItems(words);
     setLoading(false);
+
+    if (words.length > 0) return;
+
+    try {
+      const supabase = createClient();
+      const { data: session } = await supabase.auth.getSession();
+      if (session.session) {
+        const vocabularyRequest = supabase
+          .from("user_vocabulary")
+          .select("word_id")
+          .eq("user_id", session.session.user.id)
+          .abortSignal(AbortSignal.timeout(5000));
+        const { data: vocab } = await vocabularyRequest;
+        if (vocab?.length) {
+          const ids = vocab.map((v) => v.word_id);
+          const { data: ws } = await supabase
+            .from("words")
+            .select("*")
+            .in("id", ids)
+            .abortSignal(AbortSignal.timeout(5000));
+          if (ws) {
+            setItems(ws as Word[]);
+          }
+        }
+      }
+    } catch {
+      // Keep the already-rendered local state when remote recovery times out.
+    }
   }, []);
 
   useEffect(() => {
