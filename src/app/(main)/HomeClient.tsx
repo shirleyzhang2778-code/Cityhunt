@@ -163,6 +163,7 @@ export function HomeClient({
                   authorQrUrl={appConfig?.author_wechat_qr_url ?? null}
                   onUnlockChange={refreshUnlocks}
                   chapterProgress={chapterProgress}
+                  serverChapters={serverChapters}
                 />
               ))}
             </div>
@@ -179,6 +180,7 @@ function BookCardWrapper({
   authorQrUrl,
   onUnlockChange,
   chapterProgress,
+  serverChapters,
 }: {
   book: Book;
   unlocked: boolean;
@@ -213,12 +215,16 @@ function BookCardWrapper({
       }
     } catch {}
     // Also check chapterProgress from IndexedDB/Supabase as supplement
-    for (const chProg of Object.values(chapterProgress)) {
-      mastered = Math.max(mastered, chProg.mastered_count ?? 0);
-    }
+    const chapterMastered = serverChapters
+      .filter((chapter) => chapter.book_id === book.id)
+      .reduce(
+        (sum, chapter) => sum + (chapterProgress[chapter.id]?.mastered_count ?? 0),
+        0
+      );
+    mastered = Math.max(mastered, chapterMastered);
     const total = book.word_count || 1;
     setProgress(Math.min(1, mastered / total));
-  }, [book.id, book.word_count, chapterProgress]);
+  }, [book.id, book.word_count, chapterProgress, serverChapters]);
 
   useEffect(() => {
     refresh();

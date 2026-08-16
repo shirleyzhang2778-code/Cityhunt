@@ -20,4 +20,6 @@ npm run dev
 
 ## 文档
 
-产品与设计见 `PRDs/` 目录。
+- 项目协作入口：[`AGENTS.md`](./AGENTS.md)
+- 文档导航：[`docs/README.md`](./docs/README.md)
+- 原始技术规范：[`PRDs/development.md`](./PRDs/development.md)
