@@ -4,8 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AppConfig, Banner, Book, Category, Chapter } from "@/lib/types";
 import { BookCard } from "@/components/books/BookCard";
 import { BannerCarousel } from "@/components/home/BannerCarousel";
+import { TodayReviewCard } from "@/components/home/TodayReviewCard";
 import { db } from "@/lib/db/dexie";
 import { createClient } from "@/lib/supabase/client";
+import { getDailyReviewGoal, getReviewSummary } from "@/lib/review";
 
 type Props = {
   categories: Category[];
@@ -29,6 +31,26 @@ export function HomeClient({
     Record<string, { mastered_count: number }>
   >({});
   const [, setTick] = useState(0);
+  const [reviewSummary, setReviewSummary] = useState({
+    due: 0,
+    weak: 0,
+    completedToday: 0,
+    goal: 10,
+  });
+
+  const loadReviewSummary = useCallback(async () => {
+    const goal = getDailyReviewGoal();
+    if (!db) {
+      setReviewSummary((current) => ({ ...current, goal }));
+      return;
+    }
+    try {
+      const rows = await db.word_progress.toArray();
+      setReviewSummary({ ...getReviewSummary(rows), goal });
+    } catch {
+      setReviewSummary((current) => ({ ...current, goal }));
+    }
+  }, []);
 
   const refreshUnlocks = useCallback(async () => {
     const set = new Set(serverUnlocks);
@@ -110,18 +132,20 @@ export function HomeClient({
 
   useEffect(() => {
     loadProgress();
-  }, [loadProgress]);
+    loadReviewSummary();
+  }, [loadProgress, loadReviewSummary]);
 
   // reload progress when navigating back (visibility change)
   useEffect(() => {
     function onVisible() {
       if (document.visibilityState === "visible") {
         loadProgress();
+        loadReviewSummary();
       }
     }
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [loadProgress]);
+  }, [loadProgress, loadReviewSummary]);
 
   const booksByCategory = useMemo(() => {
     const m = new Map<string, Book[]>();
@@ -140,6 +164,7 @@ export function HomeClient({
         banners={banners}
         isReviewMode={appConfig?.is_review_mode ?? false}
       />
+      <TodayReviewCard {...reviewSummary} />
       {categories.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-semibold text-primary">暂无词书数据</p>

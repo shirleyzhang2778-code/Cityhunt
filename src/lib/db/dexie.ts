@@ -18,6 +18,13 @@ export type WordProgressRow = {
   status: string;
   familiar?: boolean;
   updatedAt: number;
+  word?: Word;
+  chapterId?: string;
+  reviewCount?: number;
+  lapseCount?: number;
+  intervalDays?: number;
+  dueAt?: number;
+  lastReviewedAt?: number;
 };
 
 export type VocabularyRow = {

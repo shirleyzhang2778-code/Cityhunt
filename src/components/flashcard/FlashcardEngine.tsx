@@ -13,6 +13,7 @@ import { isEmptyField, cn } from "@/lib/utils";
 import { db } from "@/lib/db/dexie";
 import { createClient } from "@/lib/supabase/client";
 import { enqueueSync } from "@/lib/sync/progressQueue";
+import { createNextReviewProgress } from "@/lib/review";
 
 type CardSide = "front" | "back";
 
@@ -21,11 +22,18 @@ type Props = {
   initialIndex?: number;
   returnTo?: string;
   completeHref?: string;
+  isReviewSession?: boolean;
 };
 
-export function FlashcardEngine({ bundle, initialIndex = 0, returnTo, completeHref }: Props) {
+export function FlashcardEngine({
+  bundle,
+  initialIndex = 0,
+  returnTo,
+  completeHref,
+  isReviewSession = false,
+}: Props) {
   const router = useRouter();
-  const words = bundle.words.sort((a, b) => a.sort_order - b.sort_order);
+  const words = [...bundle.words].sort((a, b) => a.sort_order - b.sort_order);
   const [index, setIndex] = useState(initialIndex);
   const [side, setSide] = useState<CardSide>("front");
   const [starred, setStarred] = useState<Set<string>>(new Set());
@@ -130,11 +138,16 @@ export function FlashcardEngine({ bundle, initialIndex = 0, returnTo, completeHr
 
       if (db) {
         try {
+          const previous = await db.word_progress.get(word.id);
+          const now = Date.now();
           await db.word_progress.put({
             wordId: word.id,
             status,
             familiar,
-            updatedAt: Date.now(),
+            updatedAt: now,
+            word,
+            chapterId: word.chapter_id,
+            ...createNextReviewProgress(previous, familiar, now),
           });
         } catch {
           // IndexedDB failed, continue
@@ -142,7 +155,9 @@ export function FlashcardEngine({ bundle, initialIndex = 0, returnTo, completeHr
       }
 
       const masteredCount = masteredRef.current.size;
-      await saveChapterProgress(masteredCount);
+      if (!isReviewSession) {
+        await saveChapterProgress(masteredCount);
+      }
 
       try {
         const supabase = createClient();
@@ -153,17 +168,19 @@ export function FlashcardEngine({ bundle, initialIndex = 0, returnTo, completeHr
             status,
             familiar,
           });
-          await enqueueSync("chapter_progress", {
-            chapter_id: bundle.chapter.id,
-            mastered_count: masteredCount,
-            last_word_index: index,
-          });
+          if (!isReviewSession) {
+            await enqueueSync("chapter_progress", {
+              chapter_id: bundle.chapter.id,
+              mastered_count: masteredCount,
+              last_word_index: index,
+            });
+          }
         }
       } catch {
         // sync queue failed
       }
     },
-    [bundle.chapter.id, index, saveChapterProgress]
+    [bundle.chapter.id, index, isReviewSession, saveChapterProgress]
   );
 
   const nextWord = useCallback(() => {
@@ -179,7 +196,7 @@ export function FlashcardEngine({ bundle, initialIndex = 0, returnTo, completeHr
     }
     setIndex((i) => i + 1);
     setSide("front");
-  }, [index, words.length, bundle.chapter.id, bundle.chapter.book_id, router]);
+  }, [index, words.length, bundle.chapter.id, bundle.chapter.book_id, completeHref, returnTo, router]);
 
   const goBack = useCallback(() => {
     audioManager.stop();
