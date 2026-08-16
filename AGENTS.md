@@ -11,6 +11,9 @@
 - 项目边界与当前能力：[`docs/project/overview.md`](docs/project/overview.md)
 - 技术架构与数据流：[`docs/project/architecture.md`](docs/project/architecture.md)
 - 开发约定：[`docs/project/conventions.md`](docs/project/conventions.md)
+- 标准开发流程与交付闸门：[`docs/project/development-workflow.md`](docs/project/development-workflow.md)
+- 环境边界：[`docs/project/environments.md`](docs/project/environments.md)
+- 发布与回滚：[`docs/project/release-checklist.md`](docs/project/release-checklist.md)
 - 原始技术规范（较长，按需读取）：[`PRDs/development.md`](PRDs/development.md)
 - 本地运行与部署：[`SETUP.md`](SETUP.md)
 - 数据库真实实现：[`supabase/migrations/`](supabase/migrations/)
@@ -25,6 +28,7 @@
 | PWA、Service Worker | `next.config.ts`、`src/sw.ts`、`src/app/manifest.ts` |
 | 新功能 | `docs/work/README.md`，再创建独立任务文档 |
 | 测试或修复 | `docs/testing/README.md`、相关实现文件 |
+| 发布或环境配置 | `docs/project/environments.md`、`docs/project/release-checklist.md`、`SETUP.md` |
 
 ## 工作规则
 
@@ -35,6 +39,10 @@
 5. 不提交 `.env.local`、密钥、生成目录或构建产物。
 6. 数据库变更只能新增迁移，不修改已经执行过的历史迁移。
 7. 修改后至少运行类型/构建检查；涉及交互时补充真实页面操作验证。
+8. 新功能开始编码前必须通过需求准备、影响范围两个闸门；执行时每轮只交付一个可验证增量。
+9. 任务文件必须明确将修改、不修改的范围以及回滚方案；发现需要越界时先更新任务记录并取得确认。
+10. 完成必须满足 Definition of Done：验收项、构建、真实页面验证、文档同步和回滚信息均已落实。
+11. 涉及权限、密钥、不可逆迁移、跨模块重构或正式生产发布时进行独立反方审查；可用不同模型时优先双模型互审。
 
 ## 目录职责
 

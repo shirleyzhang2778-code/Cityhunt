@@ -1,4 +1,4 @@
-# 部署与 Phase 0 清单
+# 本地运行与 Cloudflare 部署
 
 ## 1. Supabase
 
@@ -23,11 +23,16 @@ npm run dev
 
 将 `Pyidaungsu-Regular.woff2` 放入 `public/fonts/`。未放置时使用 Noto Sans Myanmar 回退。
 
-## 4. Vercel
+## 4. Cloudflare Demo
 
-1. 导入 Git 仓库
-2. 环境变量与 `.env.local` 相同
-3. Deploy
+1. 使用 Cloudflare 账号完成 Wrangler 登录。
+2. 在 Cloudflare 环境配置公开的 Supabase URL 与匿名 Key。
+3. 服务角色密钥仅在确有服务端需求且用户明确授权时配置，不能进入浏览器。
+4. 运行 `npm run build` 完成本地生产构建检查。
+5. 运行 `npm run deploy` 发布到 Cloudflare Workers。
+6. 按 `docs/project/release-checklist.md` 验证并记录 Version ID。
+
+当前 Demo 地址：`https://myanmar-vocab-app.shirleyzhang2778.workers.dev`
 
 ## 5. 测试账号与激活码
 
