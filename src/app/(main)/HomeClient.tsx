@@ -6,9 +6,11 @@ import { BookCard } from "@/components/books/BookCard";
 import { BannerCarousel } from "@/components/home/BannerCarousel";
 import { TodayReviewCard } from "@/components/home/TodayReviewCard";
 import { PracticeCard } from "@/components/home/PracticeCard";
+import { LearningStatsCard } from "@/components/home/LearningStatsCard";
 import { db } from "@/lib/db/dexie";
 import { createClient } from "@/lib/supabase/client";
 import { getDailyReviewGoal, getReviewSummary } from "@/lib/review";
+import { buildLearningStats } from "@/lib/stats";
 
 type Props = {
   categories: Category[];
@@ -38,6 +40,7 @@ export function HomeClient({
     completedToday: 0,
     goal: 10,
   });
+  const [learningStats, setLearningStats] = useState({ streakDays: 0, accuracy: 0, totalAnswers: 0 });
 
   const loadReviewSummary = useCallback(async () => {
     const goal = getDailyReviewGoal();
@@ -50,6 +53,24 @@ export function HomeClient({
       setReviewSummary({ ...getReviewSummary(rows), goal });
     } catch {
       setReviewSummary((current) => ({ ...current, goal }));
+    }
+  }, []);
+
+  const loadLearningStats = useCallback(async () => {
+    if (!db) return;
+    try {
+      const [events, progress] = await Promise.all([
+        db.review_events.toArray(),
+        db.word_progress.toArray(),
+      ]);
+      const stats = buildLearningStats(events, progress);
+      setLearningStats({
+        streakDays: stats.streakDays,
+        accuracy: stats.accuracy,
+        totalAnswers: stats.totalAnswers,
+      });
+    } catch {
+      // statistics are optional and must not block the home page
     }
   }, []);
 
@@ -134,7 +155,8 @@ export function HomeClient({
   useEffect(() => {
     loadProgress();
     loadReviewSummary();
-  }, [loadProgress, loadReviewSummary]);
+    loadLearningStats();
+  }, [loadProgress, loadReviewSummary, loadLearningStats]);
 
   // reload progress when navigating back (visibility change)
   useEffect(() => {
@@ -142,11 +164,12 @@ export function HomeClient({
       if (document.visibilityState === "visible") {
         loadProgress();
         loadReviewSummary();
+        loadLearningStats();
       }
     }
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [loadProgress, loadReviewSummary]);
+  }, [loadProgress, loadReviewSummary, loadLearningStats]);
 
   const booksByCategory = useMemo(() => {
     const m = new Map<string, Book[]>();
@@ -167,6 +190,7 @@ export function HomeClient({
       />
       <TodayReviewCard {...reviewSummary} />
       <PracticeCard />
+      <LearningStatsCard {...learningStats} />
       {categories.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-semibold text-primary">暂无词书数据</p>

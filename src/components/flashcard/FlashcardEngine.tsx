@@ -14,6 +14,7 @@ import { db } from "@/lib/db/dexie";
 import { createClient } from "@/lib/supabase/client";
 import { enqueueSync } from "@/lib/sync/progressQueue";
 import { createNextReviewProgress } from "@/lib/review";
+import { recordReviewEvent } from "@/lib/stats";
 
 type CardSide = "front" | "back";
 
@@ -152,6 +153,12 @@ export function FlashcardEngine({
         } catch {
           // IndexedDB failed, continue
         }
+      }
+
+      try {
+        await recordReviewEvent(word.id, familiar, isReviewSession ? "review" : "study");
+      } catch {
+        // stats must never block learning
       }
 
       const masteredCount = masteredRef.current.size;

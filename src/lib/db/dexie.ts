@@ -52,6 +52,14 @@ export type SyncQueueRow = {
   createdAt: number;
 };
 
+export type ReviewEventRow = {
+  id?: number;
+  wordId: string;
+  familiar: boolean;
+  source: "study" | "review" | "meaning" | "audio";
+  reviewedAt: number;
+};
+
 export class AppDatabase extends Dexie {
   chapter_bundles!: Table<ChapterBundleRow, string>;
   chapter_progress!: Table<ChapterProgressRow, string>;
@@ -60,6 +68,7 @@ export class AppDatabase extends Dexie {
   book_unlocks!: Table<BookUnlockRow, string>;
   media_cache!: Table<MediaCacheRow, string>;
   sync_queue!: Table<SyncQueueRow, number>;
+  review_events!: Table<ReviewEventRow, number>;
 
   constructor() {
     super("myanmar_vocab_app");
@@ -71,6 +80,16 @@ export class AppDatabase extends Dexie {
       book_unlocks: "bookId",
       media_cache: "url",
       sync_queue: "++id, createdAt",
+    });
+    this.version(2).stores({
+      chapter_bundles: "chapterId",
+      chapter_progress: "chapterId",
+      word_progress: "wordId",
+      vocabulary: "wordId",
+      book_unlocks: "bookId",
+      media_cache: "url",
+      sync_queue: "++id, createdAt",
+      review_events: "++id, reviewedAt, wordId, source",
     });
   }
 }

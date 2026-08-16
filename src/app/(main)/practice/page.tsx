@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { audioManager } from "@/lib/audio/AudioManager";
 import { db } from "@/lib/db/dexie";
 import { createNextReviewProgress } from "@/lib/review";
+import { recordReviewEvent } from "@/lib/stats";
 import type { Word } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +86,7 @@ export default function PracticePage() {
         chapterId: current.word.chapter_id,
         ...createNextReviewProgress(previous, isCorrect, now),
       });
+      await recordReviewEvent(current.word.id, isCorrect, mode);
     }
   }
 
